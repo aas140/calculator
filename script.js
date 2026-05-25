@@ -42,13 +42,17 @@ function operate(n1, n2, op){
 function equate(){
     countOp--;
     const s = display.value;
-    let op, index;
+    if(s=="") return;
+    let op, index = 0;
     for (let i = 0; i < s.length; i++) {
         if (operators.includes(s[i])) {
             op = s[i];
             index = i;
             break;
         }
+    }
+    if(index == 0){
+        return;
     }
     let n1 = s.slice(0, index);
     let n2 = s.slice(index + 1);
@@ -70,7 +74,8 @@ btn.addEventListener('click', (e)=>{
         equate();
     }
     if(operators.includes(n1)) justCalculated = false;
-    display.value += n1;
+    if(operators.includes(n1) && display.value=="") display.value = "0"+n1;
+    else display.value += n1;
 })
 
 clearbtn.addEventListener('click', () =>{
