@@ -31,15 +31,25 @@ function division(a,b){
 }
 
 function operate(n1, n2, op){
+    n1 = Number(n1); n2 = Number(n2);
+    let res;
     switch(op){
-        case "+": return Number(n1)+Number(n2);
-        case "-": return n1-n2;
-        case "x": return n1*n2;
+        case "+":
+            res = n1+n2;
+            break;
+        case "-":
+            res = n1-n2;
+            break;
+        case "x":
+            res = n1*n2;
+            break;
         case "/":
             if(n2==0) return `ERROR`;
-            else return n1/n2;
+            else res = n1/n2;
+            break;
         default: return `ERROR`;
     }
+    return parseFloat(res.toFixed(10));
 
 }
 function equate(){
@@ -67,11 +77,10 @@ function equate(){
 
 }
 
-btn.addEventListener('click', (e)=>{
-    n1 = e.target.textContent;
-    if(n1==".") countPoint++;
+function keyfunction(k){
+    if(k==".") countPoint++;
     if(countPoint>1) return;
-    if(operators.includes(n1)){ countOp++; countPoint=0;}
+    if(operators.includes(k)){ countOp++; countPoint=0;}
     else if(justCalculated){
         display.value = "";
         justCalculated = false;
@@ -79,9 +88,16 @@ btn.addEventListener('click', (e)=>{
     if(countOp==2){
         equate();
     }
-    if(operators.includes(n1)) justCalculated = false;
-    if((operators.includes(n1) || n1==".") && display.value=="") display.value = "0"+n1;
-    else display.value += n1;
+    if(operators.includes(k)) justCalculated = false;
+    if((operators.includes(k) || k==".") && display.value=="") display.value = "0"+k;
+    else display.value += k;
+
+}
+
+btn.addEventListener('click', (e)=>{
+    n1 = e.target.textContent;
+    keyfunction(n1);
+    
 })
 
 clearbtn.addEventListener('click', () =>{
@@ -90,8 +106,17 @@ clearbtn.addEventListener('click', () =>{
 
 eval.addEventListener('click', equate);
 
-del.addEventListener('click', ()=>{
+del.addEventListener('click', undo);
+
+document.addEventListener("keydown", (e) => {
+    let str = "0123456789.";
+    if(str.includes(e.key) || operators.includes(e.key)) keyfunction(e.key);
+    else if(e.key == "Backspace") undo();
+    else if(e.key == "=") equate();
+})
+
+function undo(){
     let s = display.value;
     s = s.slice(0, -1);
     display.value = s;
-})
+}
