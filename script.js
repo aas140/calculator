@@ -7,8 +7,10 @@ const btn = document.querySelector(".digits");
 const display = document.querySelector(".display");
 const clearbtn = document.querySelector(".clear");
 const eval = document.querySelector(".equal");
+const del = document.querySelector(".delete");
 
 let countOp = 0;
+let countPoint = 0;
 let justCalculated = false;
 let operators = ["+", "-", "x", "/"];
 
@@ -38,9 +40,10 @@ function operate(n1, n2, op){
             else return n1/n2;
         default: return `ERROR`;
     }
+
 }
 function equate(){
-    countOp--;
+    justCalculated = true;
     const s = display.value;
     if(s=="") return;
     let op, index = 0;
@@ -52,6 +55,7 @@ function equate(){
         }
     }
     if(index == 0){
+        display.value = Number(display.value);
         return;
     }
     let n1 = s.slice(0, index);
@@ -59,13 +63,15 @@ function equate(){
 
     let res =  operate(n1, n2, op);
     display.value = res;
-    justCalculated = true;
+    countOp--;
 
 }
 
 btn.addEventListener('click', (e)=>{
     n1 = e.target.textContent;
-    if(operators.includes(n1)) countOp++;
+    if(n1==".") countPoint++;
+    if(countPoint>1) return;
+    if(operators.includes(n1)){ countOp++; countPoint=0;}
     else if(justCalculated){
         display.value = "";
         justCalculated = false;
@@ -74,7 +80,7 @@ btn.addEventListener('click', (e)=>{
         equate();
     }
     if(operators.includes(n1)) justCalculated = false;
-    if(operators.includes(n1) && display.value=="") display.value = "0"+n1;
+    if((operators.includes(n1) || n1==".") && display.value=="") display.value = "0"+n1;
     else display.value += n1;
 })
 
@@ -83,3 +89,9 @@ clearbtn.addEventListener('click', () =>{
 })
 
 eval.addEventListener('click', equate);
+
+del.addEventListener('click', ()=>{
+    let s = display.value;
+    s = s.slice(0, -1);
+    display.value = s;
+})
